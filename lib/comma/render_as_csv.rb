@@ -21,7 +21,7 @@ module RenderAsCSV
     @performed_render = false
 
     render_stream :status => 200,
-                  :content => Array(content),
+                  :content => content,
                   :style => style
   end
 
