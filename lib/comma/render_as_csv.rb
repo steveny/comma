@@ -42,7 +42,11 @@ module RenderAsCSV
       self.status = status
       self.response_body = proc { |response, output|
         output.write FasterCSV.generate_line(content.first.to_comma_headers(style))
-        content.each { |line| output.write FasterCSV.generate_line(line.to_comma(style)) }
+        if content.respond_to?(:find_in_batches)
+          content.find_in_batches(:batch_size => 5000) {|lines| lines.each {|line| output.write FasterCSV.generate_line(line.to_comma(style)) }}
+        else
+          content.each { |line| output.write FasterCSV.generate_line(line.to_comma(style)) }
+        end
       }
     end
   end
