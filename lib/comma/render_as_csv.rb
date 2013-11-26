@@ -40,16 +40,23 @@ module RenderAsCSV
       }
     else # If Rails 3.x
       self.status = status
-      self.response_body = proc { |response, output|
-        output.write FasterCSV.generate_line(content.first.to_comma_headers(style))
+      self.response_body = Enumerator.new do |output|
+        output << FasterCSV.generate_line(content.first.to_comma_headers(style))
         if content.respond_to?(:find_in_batches)
-          content.find_in_batches(:batch_size => 5000) {|lines| lines.each {|line| output.write FasterCSV.generate_line(line.to_comma(style)) }}
+          ActiveRecord::Base.uncached do
+            content.find_in_batches(:batch_size => 5000) do |lines| 
+               lines.each do |line| 
+                  output << FasterCSV.generate_line(line.to_comma(style)) 
+               end 
+            end
+          end
         else
-          content.each { |line| output.write FasterCSV.generate_line(line.to_comma(style)) }
+          content.each { |line| output << FasterCSV.generate_line(line.to_comma(style)) }
         end
-      }
+      end
     end
   end
+
 end
 
 #credit : http://ramblingsonrails.com/download-a-large-amount-of-data-in-csv-from-rails
