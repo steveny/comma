@@ -1,4 +1,5 @@
-source :rubygems
+source "http://rubygems.org"
 
-# Include dependencies from gemspec.
+gem "fastercsv", :platforms => :ruby_18
+
 gemspec

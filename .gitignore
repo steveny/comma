@@ -2,3 +2,6 @@ pkg/*
 .*.swp
 *~
 .bundle
+spec/rails_app/log
+spec/rails_app/db/development.sqlite*
+.rbx/
