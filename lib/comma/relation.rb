@@ -1,5 +1,7 @@
 class ActiveRecord::Relation
   def to_comma(style = :default)
-    Comma::Generator.new(self, style).run(:find_each)
+    ActiveRecord::Base.uncached do
+      Comma::Generator.new(self, style).run(:find_each)
+    end
   end
 end
